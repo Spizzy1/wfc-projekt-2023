@@ -2,22 +2,27 @@
 //
 
 #include <iostream>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
 #include <tuple>
+#include <algorithm>
 
-#define resolution 100
 using std::vector;
 using std::tuple;
 using std::function;
 using std::get;
+using std::cout;
 
-struct Chunk {
-    float x, y;
-};
-
+template<typename T>
+bool contains(vector<T> vec, T val) {
+    for (int i = 0; i < vec.size(); i++) {
+        if (vec[i] == val)
+            return true;
+    }
+    return false;
+}
 
 
 vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> grid, int x, int y) {
@@ -49,28 +54,50 @@ int main(int argv, char* argc[])
     const unsigned int texWidth = ww;
     const unsigned int texHeight = wh;
     SDL_Texture* winTex = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texWidth, texHeight );
-    vector<uint32_t> pixels(texWidth * texHeight * 4, 0);
+    vector<unsigned char> pixels(texWidth * texHeight * 4, 0);
 
     float dt;
     // wfc stuff
+    const int resolution = 100;
     vector<vector<Uint8>> grid(resolution, vector<Uint8>(resolution));
-    vector<vector<Uint8>> neighbourhoods = {};
+    //vector<vector<Uint8>> neighbourhoods = {};
     float tile_length = (float)ww / resolution;
 
-    int types = 2;
+    vector<Uint8> img = {
+        1, 1, 0, 0, 0, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 0, 1, 0, 1, 0, 0,
+        0, 0, 0, 1, 0, 1, 0, 0,
+        0, 0, 0, 1, 0, 1, 1, 1,
+        1, 1, 1, 1, 0, 0, 0, 0,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 0, 1, 1, 1, 1, 0
+    };
+    int img_width = 8;
+    int img_height = 8;
+    int types;    
+    for (int i = 0; i < img.size(); i++) {
+        if (img[0] > types)
+            types = img[0];
+    }
+    types += 1;
+
+    vector<vector<Uint8>> neighbourhoods((resolution-types)*(resolution-types), vector<Uint8>(types*types));
+    for (int i = 0; i < neighbourhoods.size(); i++) {
+        
+    }
+
+    //int types = tiles.size();
 
 
     
     int start_c = resolution / 2;
-    vector<tuple<int, int>> surrounding_tiles = surroundingTiles(grid, start_c, start_c);
-    std::cout << get<0>(surrounding_tiles[0]) << std::endl;
     grid[start_c][start_c] = rand() % types + 1;
-    vector<vector<bool>> possibleList(resolution * resolution, vector<bool>(true, 2));
+    vector<vector<bool>> possibleList(resolution * resolution, vector<bool>(true, types));
 
     vector<tuple<int, int>> tilesToCheck = {{start_c, start_c}};
-
-    while (tilesToCheck.data()) {
-
+    
+    while (tilesToCheck.size() != 0) {
         tuple<int, int> tile = tilesToCheck[0];
         tilesToCheck.pop_back();
         vector<vector<bool>> nbh = {
@@ -79,6 +106,8 @@ int main(int argv, char* argc[])
             possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)+1]
         };
         vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
+
+        cout << "this is a test";
 
         bool reduced = false;
         for (int it = 0; it < nbh[4].size(); it++) {
@@ -112,9 +141,11 @@ int main(int argv, char* argc[])
             possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
         
         }
-
         vector<bool> boolList = possibleList[get<0>(tile) * resolution + get<1>(tile)];
+
     }
+    
+    
     
     bool running = true;
     SDL_Event ev;
