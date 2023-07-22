@@ -80,6 +80,7 @@ int main(int argv, char* argc[])
     int img_width = 8;
     int img_height = 8;
     int nb_sl = 3;
+    int mid_nbh_index = (nb_sl*nb_sl-1)/2 + 1;
     int types = 0;    
     for (int i = 0; i < img.size(); i++) {
         if (img[0] > types)
@@ -110,6 +111,7 @@ int main(int argv, char* argc[])
     while (tilesToCheck.size() != 0) {
         tuple<int, int> tile = tilesToCheck[0];
         tilesToCheck.pop_back();
+        // måste ändras för olika nb_sl
         vector<vector<bool>> nbh = {
             possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)+1],
             possibleList[(get<0>(tile))*resolution + get<1>(tile)-1], possibleList[(get<0>(tile))*resolution + get<1>(tile)], possibleList[(get<0>(tile))*resolution + get<1>(tile)+1],
@@ -118,12 +120,12 @@ int main(int argv, char* argc[])
         vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
 
         bool reduced = false;
-        for (int it = 0; it < nbh[4].size(); it++) {
+        for (int it = 0; it < nbh[mid_nbh_index].size(); it++) {
             bool works = false;
             if (nbh[4][it]) {
                 for (int i = 0; i < neighbourhoods.size(); i++) {
 
-                    if (it == neighbourhoods[i][4]) {
+                    if (it == neighbourhoods[i][mid_nbh_index]) {
                         bool fits = true;
                         for (int n = 0; n < 9; n++) {
                             if (!nbh[n][neighbourhoods[i][n]]) {
@@ -201,11 +203,12 @@ int main(int argv, char* argc[])
 
 /*
 - get tilerendering up and running
-- get surrounding tiles
-- get list that contains rules for each type of tile (lambda functions)
-- generate tiles in a grid based on the rules:
-    pick a tule in the middle of the grid, then get the possible tiles for the surrounding ones, and pick a random tile for the tile with
-    the most possibilities. Repeat this for all surrounding tiles.
+- create a process for drawing images and then inputting them as rules
+*/
+
+/*
+Bra idéer:
+- skapa en funktion för att ge ett neighboardhood av measurements n*n från ett grid
 */
 
 //Play among us
