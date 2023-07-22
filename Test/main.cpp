@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -16,6 +16,7 @@ using std::get;
 using std::cout;
 
 template<typename T>
+
 bool contains(vector<T> vec, T val) {
     for (int i = 0; i < vec.size(); i++) {
         if (vec[i] == val)
@@ -24,7 +25,7 @@ bool contains(vector<T> vec, T val) {
     return false;
 }
 
-
+//Gives you the sorrounding tiles around a position on the grid
 vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> grid, int x, int y) {
     vector<tuple<int, int>> coords;
     for (int iy = -1; iy <= 1; iy++) {
@@ -42,11 +43,13 @@ vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> grid, int x, int 
 int main(int argv, char* argc[])
 {
 
-    vector<function<bool(vector<vector<Uint8>>, int x, int y)>> tile_functions = { [](vector<vector<Uint8>> grid, int x, int y) -> bool {return true; } };
     std::cout << "Hola mundo" << std::endl;
     
+    //Width and height respectively
     int ww = 600;
     int wh = 600;
+
+    //Creates the window
     SDL_Window* window = SDL_CreateWindow("Wave function collapse implementation Mattekollo 2023",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, ww, wh, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 
@@ -56,13 +59,15 @@ int main(int argv, char* argc[])
     SDL_Texture* winTex = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texWidth, texHeight );
     vector<unsigned char> pixels(texWidth * texHeight * 4, 0);
 
+    // deltatime
     float dt;
+
     // wfc stuff
     const int resolution = 100;
-    vector<vector<Uint8>> grid(resolution, vector<Uint8>(resolution));
-    //vector<vector<Uint8>> neighbourhoods = {};
+    vector<vector<Uint8>> grid(resolution, vector<Uint8>(resolution, -1));
     float tile_length = (float)ww / resolution;
 
+    // declare img and get information about it
     vector<Uint8> img = {
         1, 1, 0, 0, 0, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1,
@@ -76,32 +81,32 @@ int main(int argv, char* argc[])
     int img_width = 8;
     int img_height = 8;
     int nb_sl = 3;
-    int types;    
+    int types = 0;    
     for (int i = 0; i < img.size(); i++) {
         if (img[0] > types)
             types = img[0];
     }
     types += 1;
 
+    // gets all neighbourhoods from img
     vector<vector<Uint8>> neighbourhoods((img_width-nb_sl)*(resolution-nb_sl), vector<Uint8>(nb_sl*nb_sl));
-    for (int i = 0; i < neighbourhoods.size(); i++) {
-        for (int y = 0; y < nb_sl; y++) {
-            for (int x = 0; x < nb_sl; y++) {
-                //neighbourhoods[i][y*nb_sl]
+    for (int i = 0; i < img_height - nb_sl; i++) {
+        for (int j = 0; j < img_width-nb_sl; j++) {
+            for (int y = 0; y < nb_sl; y++) {
+                for (int x = 0; x < nb_sl; x++) {
+                    neighbourhoods[i*(img_width-nb_sl)+j][(i + y) * img_width + j + x] = img[y * nb_sl + x];
+                }
             }
         }
     }
 
-    //int types = tiles.size();
-
-
-    
     int start_c = resolution / 2;
     grid[start_c][start_c] = rand() % types + 1;
     vector<vector<bool>> possibleList(resolution * resolution, vector<bool>(true, types));
 
     vector<tuple<int, int>> tilesToCheck = {{start_c, start_c}};
     
+    //Propagates through tiles
     while (tilesToCheck.size() != 0) {
         tuple<int, int> tile = tilesToCheck[0];
         tilesToCheck.pop_back();
@@ -111,8 +116,6 @@ int main(int argv, char* argc[])
             possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)+1]
         };
         vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
-
-        cout << "this is a test";
 
         bool reduced = false;
         for (int it = 0; it < nbh[4].size(); it++) {
