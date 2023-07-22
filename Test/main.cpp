@@ -75,6 +75,7 @@ int main(int argv, char* argc[])
     };
     int img_width = 8;
     int img_height = 8;
+    int nb_sl = 3;
     int types;    
     for (int i = 0; i < img.size(); i++) {
         if (img[0] > types)
@@ -82,9 +83,13 @@ int main(int argv, char* argc[])
     }
     types += 1;
 
-    vector<vector<Uint8>> neighbourhoods((resolution-types)*(resolution-types), vector<Uint8>(types*types));
+    vector<vector<Uint8>> neighbourhoods((img_width-nb_sl)*(resolution-nb_sl), vector<Uint8>(nb_sl*nb_sl));
     for (int i = 0; i < neighbourhoods.size(); i++) {
-        
+        for (int y = 0; y < nb_sl; y++) {
+            for (int x = 0; x < nb_sl; y++) {
+                //neighbourhoods[i][y*nb_sl]
+            }
+        }
     }
 
     //int types = tiles.size();
