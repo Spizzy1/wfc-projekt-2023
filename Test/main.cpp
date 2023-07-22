@@ -3,19 +3,39 @@
 
 #include <iostream>
 #include <SDL.h>
+#include <functional>
+#include <cmath>
+
+struct chunk {
+    float x, y;
+};
 
 int main(int argv, char* argc[])
 {
-    std::cout << "Hola mundo" << std::endl;
 
-    int ww = 480;
-    int wh = 480;
-    SDL_Window* window = SDL_CreateWindow("the best window possibly in the world",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, ww, wh, 0);
+    std::function<bool(Uint8**,int x, int y)> l = [](Uint8** grid, int x, int y) -> bool {return false;};
+    std::cout << "Hola mundo" << std::endl;
+    
+    int ww = 600;
+    int wh = 600;
+    SDL_Window* window = SDL_CreateWindow("Wave function collapse implementation Mattekollo 2023",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, ww, wh, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 
+
+    float dt;
+    // wfc stuff
+    const int resolution = 100;
+    Uint8 grid[resolution][resolution];
+    
+    
+    //SDL_Surface* screen = SDL_CreateRGBSurface(0, ww, wh, 8, 0, 0, 0, SDL_ALPHA_OPAQUE);
+
+    
     bool running = true;
     SDL_Event ev;
     while (running) {
+
+        int startTime = SDL_GetTicks();
 
         while (SDL_PollEvent(&ev)) {
             switch (ev.type) {
@@ -29,10 +49,11 @@ int main(int argv, char* argc[])
 
         SDL_RenderPresent(renderer);
 
+        dt = (SDL_GetTicks() - startTime) / 1000.0f;
+
     }
 
     return 0;
-
 
 }
 
