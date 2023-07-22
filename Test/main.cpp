@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -43,7 +43,6 @@ vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> grid, int x, int 
 int main(int argv, char* argc[])
 {
 
-    std::cout << "Hola mundo" << std::endl;
     
     //Width and height respectively
     int ww = 600;
@@ -94,7 +93,8 @@ int main(int argv, char* argc[])
         for (int j = 0; j < img_width-nb_sl; j++) {
             for (int y = 0; y < nb_sl; y++) {
                 for (int x = 0; x < nb_sl; x++) {
-                    neighbourhoods[i*(img_width-nb_sl)+j][(i + y) * img_width + j + x] = img[y * nb_sl + x];
+                    neighbourhoods[i*(img_width-nb_sl)+j][y*nb_sl+x] = img[(i + y) * img_width + j + x];
+                    //neighbourhoods[i*(img_width-nb_sl)+j][(i + y) * img_width + j + x] = img[y * nb_sl + x];
                 }
             }
         }
