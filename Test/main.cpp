@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -16,7 +16,6 @@ using std::get;
 using std::cout;
 
 template<typename T>
-
 bool contains(vector<T> vec, T val) {
     for (int i = 0; i < vec.size(); i++) {
         if (vec[i] == val)
@@ -109,7 +108,7 @@ int main(int argv, char* argc[]) {
     vector<tuple<int, int>> tilesToCheck;
 
     //vector<tuple<int, int>> tilesToCheck;// = {{start_c, start_c}};
-    for(int i = 0; i < resolution*resolution-1; i++) {
+    while(true) {
 
 
         //collapsa
@@ -117,7 +116,8 @@ int main(int argv, char* argc[]) {
         for (int y = -1; y < 2; y++) {
             for (int x = -1; x < 2; x++) {
                 tuple<int, int> t = {c_y + y, c_x + x};
-
+                if (!contains<tuple<int, int>>(tilesToCheck, t) && (x!=0 && y != 0))
+                    tilesToCheck.push_back(t);
             }
         }
         
@@ -186,7 +186,7 @@ int main(int argv, char* argc[]) {
             }
             if (sum > highest)
                 highest = sum;
-            if (!lowest or sum < lowest) {
+            if (!lowest || sum < lowest) {
                 lowest_i = i;
                 lowest = sum;
             }
@@ -197,7 +197,8 @@ int main(int argv, char* argc[]) {
         c_x = lowest_i - c_y;
 
     }
-    
+
+    float tile_sl = (float)ww / resolution;
     
     bool running = true;
     SDL_Event ev;
@@ -212,6 +213,8 @@ int main(int argv, char* argc[]) {
             }
         }
         
+
+        /*
         // splat down some random pixels
         for( unsigned int i = 0; i < ww*wh; i++ ) {
             const unsigned int x = rand() % texWidth;
@@ -223,11 +226,26 @@ int main(int argv, char* argc[]) {
             pixels[ offset + 2 ] = rand() % 256;        // r
             pixels[ offset + 3 ] = SDL_ALPHA_OPAQUE;    // a
         }
+        */
 
         SDL_UpdateTexture(winTex, nullptr, pixels.data(), texWidth * 4);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(renderer);
+
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+        for (int i = 0; i < resolution; i++) {
+            for (int j = 0; j < resolution; j++) {
+                if (grid[i][j]) {
+                    SDL_Rect* r;
+                    r.x = j*tile_sl;
+                    r.y = i*tile_sl;
+                    r.width = tile_sl;
+                    r.height = tile_sl;
+                    SDL_RenderDrawRect(renderer, r);
+                }
+            }
+        }
 
 		SDL_RenderCopy(renderer, winTex, nullptr, nullptr);
 
