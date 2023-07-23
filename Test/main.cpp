@@ -78,7 +78,7 @@ int main(int argv, char* argc[]) {
     int img_width = 8;
     int img_height = 8;
     int nb_sl = 3;
-    int mid_nbh_index = (nb_sl*nb_sl-1)/2 + 1;
+    int mid_nbh_index = (nb_sl*nb_sl-1)/2;
     int types = 0;    
     for (int i = 0; i < img.size(); i++) {
         if (img[0] > types)
@@ -100,32 +100,40 @@ int main(int argv, char* argc[]) {
     }
 
     //int start_c = resolution / 2;
-    vector<vector<bool>> possibleList(resolution * resolution, vector<bool>(true, types));
+    vector<vector<bool>> possibleList(resolution * resolution, vector<bool>(types, true));
 
     int c_x = resolution / 2;
     int c_y = resolution / 2;
 
-    vector<tuple<int, int>> tilesToCheck;
+    vector<tuple<int, int>> tilesToCheck = {};
+
+    cout << types << std::endl;
 
     //vector<tuple<int, int>> tilesToCheck;// = {{start_c, start_c}};
-    while(true) {
+    int ting = 0;
+    while (true) {
 
-
+        cout << ting << std::endl;
+        ting++;
         //collapsa
         //grid[c_y][c_x]
+        cout << grid[c_y][c_x] << std::endl;
         for (int y = -1; y < 2; y++) {
             for (int x = -1; x < 2; x++) {
-                tuple<int, int> t = {c_y + y, c_x + x};
-                if (!contains<tuple<int, int>>(tilesToCheck, t) && (x!=0 && y != 0))
-                    tilesToCheck.push_back(t);
+                if (c_x + x < resolution-1 && c_y + y < resolution-1 && x > 0 && y > 0) {
+                    tuple<int, int> t = { c_y + y, c_x + x };
+                    if (!contains<tuple<int, int>>(tilesToCheck, t)) {
+                        tilesToCheck.push_back(t);
+                    }
+                }
             }
         }
-        
+
 
         /*
-        Memories broken the truth goes unspoken I've forgotten my naaaame 
-        I don't know the season or what is the reason I've even forgotten my naaaame 
-        I don't know the season or what is the reason I've even forgotten my naaaaame 
+        Memories broken the truth goes unspoken I've forgotten my naaaame
+        I don't know the season or what is the reason I've even forgotten my naaaame
+        I don't know the season or what is the reason I've even forgotten my naaaaame
         I don't know the season or what is the reason I've even forgotten my name!!
         */
         //Propagates through tiles
@@ -134,22 +142,22 @@ int main(int argv, char* argc[]) {
             tuple<int, int> tile = tilesToCheck[0];
             tilesToCheck.pop_back();
             vector<vector<bool>> nbh = {
-                possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)+1],
-                possibleList[(get<0>(tile))*resolution + get<1>(tile)-1], possibleList[(get<0>(tile))*resolution + get<1>(tile)], possibleList[(get<0>(tile))*resolution + get<1>(tile)+1],
-                possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)+1]
+                possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile)], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) + 1],
+                possibleList[(get<0>(tile)) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile)) * resolution + get<1>(tile)], possibleList[(get<0>(tile)) * resolution + get<1>(tile) + 1],
+                possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile)], possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile) + 1]
             };
             vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
-                
+            //cout << "test" << std::endl;
             bool reduced = false;
             for (int it = 0; it < nbh[mid_nbh_index].size(); it++) {
                 bool works = false;
-                if (nbh[4][it]) {
+                if (nbh[mid_nbh_index][it]) {
                     for (int i = 0; i < neighbourhoods.size(); i++) {
-
                         if (it == neighbourhoods[i][mid_nbh_index]) {
                             bool fits = true;
-                            for (int n = 0; n < 9; n++) {
+                            for (int n = 0; n < nb_sl*nb_sl; n++) {
                                 if (!nbh[n][neighbourhoods[i][n]]) {
+                                    cout << "RAAAH!" << std::endl;
                                     fits = false;
                                     break;
                                 }
@@ -157,12 +165,12 @@ int main(int argv, char* argc[]) {
                             if (fits) {
                                 works = true;
                             }
-                            else if(!reduced) {
+                            else if (!reduced) {
                                 reduced = true;
                                 for (int y = -1; y < 2; y++) {
                                     for (int x = -1; x < 2; x++) {
                                         if (y != 0 && x != 0)
-                                            tilesToCheck.push_back({y, x});
+                                            tilesToCheck.push_back({ y, x });
                                     }
                                 }
                             }
@@ -170,15 +178,16 @@ int main(int argv, char* argc[]) {
                     }
                 }
                 possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
-            
             }
             vector<bool> boolList = possibleList[get<0>(tile) * resolution + get<1>(tile)];
-        
+
+        }
+
         // hitta den tile som skall collapsas
         int lowest = 0;
         int lowest_i = 0;
         int highest = 1;
-        for (int i = 0; i < resolution*resolution; i++) {
+        for (int i = 0; i < resolution * resolution; i++) {
             int sum = 0;
             for (int ib = 0; ib < types; ib++) {
                 if (possibleList[i][ib])
@@ -191,17 +200,24 @@ int main(int argv, char* argc[]) {
                 lowest = sum;
             }
         }
-        if (highest == 1)
+        cout << highest << std::endl;
+        cout << lowest << std::endl;
+        if (highest == 1) {
+            cout << "quit" << std::endl;
             break;
+        }
+
         c_y = lowest_i % resolution;
         c_x = lowest_i - c_y;
-
+        
+        
     }
 
+    // get possibleList:s data to grid
     for (int i = 0; i < resolution; i++) {
         for (int j = 0; j < resolution; j++) {
             for (int ib = 0; ib < types; ib++) {
-                if (possibleList[i*resolution+j][ib]) {
+                if (possibleList[i * resolution + j][ib]) {
                     grid[i][j] = ib;
                     break;
                 }
@@ -284,3 +300,4 @@ Bra idéer:
 
 //Play among us
 
+// bopi boopi bop bopi bo
