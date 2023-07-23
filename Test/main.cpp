@@ -112,11 +112,19 @@ int main(int argv, char* argc[])
         tuple<int, int> tile = tilesToCheck[0];
         tilesToCheck.pop_back();
         // måste ändras för olika nb_sl
-        vector<vector<bool>> nbh = {
-            possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)+1],
+
+        vector<vector<bool>> nbh =/*(nb_sl*nb_sl); 
+        for (int y = -((nb_sl-1)/2); y < nb_sl; y++) {
+            for (int x = -((nb_sl-1)/2); x < nb_sl; x++) {
+                nbh[y*nb_sl+x] = possibleList[(get<0>(tile)+y) * resolution + get<1>(tile)+x];
+            }
+        }
+        */
+            {possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)+1],
             possibleList[(get<0>(tile))*resolution + get<1>(tile)-1], possibleList[(get<0>(tile))*resolution + get<1>(tile)], possibleList[(get<0>(tile))*resolution + get<1>(tile)+1],
             possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)+1]
         };
+        // borde ändra så att denna täcker ett helt neighbourhood
         vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
 
         bool reduced = false;
