@@ -198,6 +198,17 @@ int main(int argv, char* argc[]) {
 
     }
 
+    for (int i = 0; i < resolution; i++) {
+        for (int j = 0; j < resolution; j++) {
+            for (int ib = 0; ib < types; ib++) {
+                if (possibleList[i*resolution+j][ib]) {
+                    grid[i][j] = ib;
+                    break;
+                }
+            }
+        }
+    }
+
     float tile_sl = (float)ww / resolution;
     
     bool running = true;
@@ -237,12 +248,12 @@ int main(int argv, char* argc[]) {
         for (int i = 0; i < resolution; i++) {
             for (int j = 0; j < resolution; j++) {
                 if (grid[i][j]) {
-                    SDL_Rect* r;
+                    SDL_Rect r;
                     r.x = j*tile_sl;
                     r.y = i*tile_sl;
-                    r.width = tile_sl;
-                    r.height = tile_sl;
-                    SDL_RenderDrawRect(renderer, r);
+                    r.w = tile_sl;
+                    r.h = tile_sl;
+                    SDL_RenderDrawRect(renderer, &r);
                 }
             }
         }
@@ -272,14 +283,4 @@ Bra idéer:
 */
 
 //Play among us
-// 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
