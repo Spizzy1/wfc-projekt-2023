@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -113,20 +113,20 @@ int main(int argv, char* argc[]) {
     int ting = 0;
     while (true) {
 
-        cout << ting << std::endl;
+        //cout << "iteration: " << ting << std::endl;
         ting++;
         //collapsa
         int collapsed_to = rand() % types;
         for (int i = 0; i < types; i++) {
-             possibleList[c_y * resolution + c_x][i] = false;
+            possibleList[c_y * resolution + c_x][i] = false;
         }
         possibleList[c_y * resolution + c_x][collapsed_to] = true;
 
         //grid[c_y][c_x]
-        cout << grid[c_y][c_x] << std::endl;
+        // add the tiles around the tile that was collapsed to the list of tiles to propogate
         for (int y = -1; y < 2; y++) {
             for (int x = -1; x < 2; x++) {
-                if (c_x + x < resolution-1 && c_y + y < resolution-1 && x > 0 && y > 0) {
+                if (c_x + x < resolution-1 && c_y + y < resolution-1 && c_x + x > 0 && c_y + y > 0 && x!=0 && y!=0) {
                     tuple<int, int> t = { c_y + y, c_x + x };
                     if (!contains<tuple<int, int>>(tilesToCheck, t)) {
                         tilesToCheck.push_back(t);
@@ -134,6 +134,8 @@ int main(int argv, char* argc[]) {
                 }
             }
         }
+
+        cout << tilesToCheck.size() << std::endl;
 
 
         /*
@@ -144,14 +146,20 @@ int main(int argv, char* argc[]) {
         */
         //Propagates through tiles
         while (tilesToCheck.size() != 0) {
+            cout << "check" << std::endl;
 
             tuple<int, int> tile = tilesToCheck[0];
+
+            cout << "tilepos: " << get<0>(tile) << " " << get<1>(tile) << std::endl;
+
             tilesToCheck.pop_back();
             vector<vector<bool>> nbh = {
                 possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile)], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) + 1],
                 possibleList[(get<0>(tile)) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile)) * resolution + get<1>(tile)], possibleList[(get<0>(tile)) * resolution + get<1>(tile) + 1],
                 possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile)], possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile) + 1]
             };
+
+            // behöver ändras?
             vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
             //cout << "test" << std::endl;
             bool reduced = false;
@@ -163,13 +171,13 @@ int main(int argv, char* argc[]) {
                             bool fits = true;
                             for (int n = 0; n < nb_sl*nb_sl; n++) {
                                 if (!nbh[n][neighbourhoods[i][n]]) {
-                                    cout << "RAAAH!" << std::endl;
+                                    //cout << "RAAAH!" << std::endl;
                                     fits = false;
                                     break;
                                 }
                             }
                             if (fits) {
-                                cout << "Rahh2!" << std::endl;
+                                //cout << "Rahh2!" << std::endl;
                                 works = true;
                             }
                             else if (!reduced) {
@@ -207,15 +215,18 @@ int main(int argv, char* argc[]) {
                 lowest = sum;
             }
         }
-        cout << highest << std::endl;
-        cout << lowest << std::endl;
+        //cout << "highest: " << highest << std::endl;
+        //cout << "lowest: " << lowest << std::endl;
         if (highest == 1) {
             cout << "quit" << std::endl;
             break;
         }
 
-        c_y = lowest_i % resolution;
+        c_y = (lowest_i % resolution) / resolution;
         c_x = lowest_i - c_y;
+
+        //cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
+        //cout << "lowest_i: " << lowest_i << std::endl;
         
         
     }
