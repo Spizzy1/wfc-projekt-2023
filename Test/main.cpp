@@ -43,7 +43,6 @@ vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> grid, int x, int 
 int main(int argv, char* argc[])
 {
 
-    std::cout << "Hola mundo" << std::endl;
     
     //Width and height respectively
     int ww = 600;
@@ -81,6 +80,7 @@ int main(int argv, char* argc[])
     int img_width = 8;
     int img_height = 8;
     int nb_sl = 3;
+    int mid_nbh_index = (nb_sl*nb_sl-1)/2 + 1;
     int types = 0;    
     for (int i = 0; i < img.size(); i++) {
         if (img[0] > types)
@@ -94,7 +94,8 @@ int main(int argv, char* argc[])
         for (int j = 0; j < img_width-nb_sl; j++) {
             for (int y = 0; y < nb_sl; y++) {
                 for (int x = 0; x < nb_sl; x++) {
-                    neighbourhoods[i*(img_width-nb_sl)+j][(i + y) * img_width + j + x] = img[y * nb_sl + x];
+                    neighbourhoods[i*(img_width-nb_sl)+j][y*nb_sl+x] = img[(i + y) * img_width + j + x];
+                    //neighbourhoods[i*(img_width-nb_sl)+j][(i + y) * img_width + j + x] = img[y * nb_sl + x];
                 }
             }
         }
@@ -131,43 +132,40 @@ int main(int argv, char* argc[])
             };
             vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
 
-            bool reduced = false;
-            for (int it = 0; it < nbh[4].size(); it++) {
-                bool works = false;
-                if (nbh[4][it]) {
-                    for (int i = 0; i < neighbourhoods.size(); i++) {
+        bool reduced = false;
+        for (int it = 0; it < nbh[mid_nbh_index].size(); it++) {
+            bool works = false;
+            if (nbh[4][it]) {
+                for (int i = 0; i < neighbourhoods.size(); i++) {
 
-                        if (it == neighbourhoods[i][4]) {
-                            bool fits = true;
-                            for (int n = 0; n < 9; n++) {
-                                if (!nbh[n][neighbourhoods[i][n]]) {
-                                    fits = false;
-                                    break;
-                                }
+                    if (it == neighbourhoods[i][mid_nbh_index]) {
+                        bool fits = true;
+                        for (int n = 0; n < 9; n++) {
+                            if (!nbh[n][neighbourhoods[i][n]]) {
+                                fits = false;
+                                break;
                             }
-                            if (fits) {
-                                works = true;
-                            }
-                            else if(!reduced) {
-                                reduced = true;
-                                for (int y = -1; y < 2; y++) {
-                                    for (int x = -1; x < 2; x++) {
-                                        if (y != 0 && x != 0)
-                                            tilesToCheck.push_back({y, x});
-                                    }
+                        }
+                        if (fits) {
+                            works = true;
+                        }
+                        else if(!reduced) {
+                            reduced = true;
+                            for (int y = -1; y < 2; y++) {
+                                for (int x = -1; x < 2; x++) {
+                                    if (y != 0 && x != 0)
+                                        tilesToCheck.push_back({y, x});
                                 }
                             }
                         }
                     }
                 }
-                possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
-            
             }
-            vector<bool> boolList = possibleList[get<0>(tile) * resolution + get<1>(tile)];
-            
-            
-
+            possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
+        
         }
+        vector<bool> boolList = possibleList[get<0>(tile) * resolution + get<1>(tile)];
+
     }
     
     
@@ -217,11 +215,12 @@ int main(int argv, char* argc[])
 
 /*
 - get tilerendering up and running
-- get surrounding tiles
-- get list that contains rules for each type of tile (lambda functions)
-- generate tiles in a grid based on the rules:
-    pick a tule in the middle of the grid, then get the possible tiles for the surrounding ones, and pick a random tile for the tile with
-    the most possibilities. Repeat this for all surrounding tiles.
+- create a process for drawing images and then inputting them as rules
+*/
+
+/*
+Bra idéer:
+- skapa en funktion för att ge ett neighboardhood av measurements n*n från ett grid
 */
 
 //Play among us
