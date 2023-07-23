@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -117,8 +117,9 @@ int main(int argv, char* argc[]) {
         ting++;
         //collapsa
         int collapsed_to = rand() % types;
-        for (int i = 0; i < types; i++)
-            possibleList[c_y * resolution + c_x][i] = false;
+        for (int i = 0; i < types; i++) {
+             possibleList[c_y * resolution + c_x][i] = false;
+        }
         possibleList[c_y * resolution + c_x][collapsed_to] = true;
 
         //grid[c_y][c_x]
@@ -168,6 +169,7 @@ int main(int argv, char* argc[]) {
                                 }
                             }
                             if (fits) {
+                                cout << "Rahh2!" << std::endl;
                                 works = true;
                             }
                             else if (!reduced) {
