@@ -100,59 +100,75 @@ int main(int argv, char* argc[])
         }
     }
 
-    int start_c = resolution / 2;
-    grid[start_c][start_c] = rand() % types + 1;
+    //int start_c = resolution / 2;
     vector<vector<bool>> possibleList(resolution * resolution, vector<bool>(true, types));
 
-    vector<tuple<int, int>> tilesToCheck = {{start_c, start_c}};
-    
-    //Propagates through tiles
-    while (tilesToCheck.size() != 0) {
-        tuple<int, int> tile = tilesToCheck[0];
-        tilesToCheck.pop_back();
-        vector<vector<bool>> nbh = {
-            possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)+1],
-            possibleList[(get<0>(tile))*resolution + get<1>(tile)-1], possibleList[(get<0>(tile))*resolution + get<1>(tile)], possibleList[(get<0>(tile))*resolution + get<1>(tile)+1],
-            possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)+1]
-        };
-        vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
+    int c_x = resolution / 2;
+    int c_y = resolution / 2;
 
-        bool reduced = false;
-        for (int it = 0; it < nbh[4].size(); it++) {
-            bool works = false;
-            if (nbh[4][it]) {
-                for (int i = 0; i < neighbourhoods.size(); i++) {
+    //vector<tuple<int, int>> tilesToCheck = {{start_c, start_c}};
+    for(int i = 0; i < resolution*resolution-1; i++) {
 
-                    if (it == neighbourhoods[i][4]) {
-                        bool fits = true;
-                        for (int n = 0; n < 9; n++) {
-                            if (!nbh[n][neighbourhoods[i][n]]) {
-                                fits = false;
-                                break;
+
+        //collapsa
+        //grid[c_y][c_x]
+        
+
+        /*
+        Memories broken the truth goes unspoken I've forgotten my naaaame 
+        I don't know the season or what is the reason I've even forgotten my naaaame 
+        I don't know the season or what is the reason I've even forgotten my naaaaame 
+        I don't know the season or what is the reason I've even forgotten my name!!
+        */
+        //Propagates through tiles
+        while (tilesToCheck.size() != 0) {
+            tuple<int, int> tile = tilesToCheck[0];
+            tilesToCheck.pop_back();
+            vector<vector<bool>> nbh = {
+                possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)-1)*resolution + get<1>(tile)+1],
+                possibleList[(get<0>(tile))*resolution + get<1>(tile)-1], possibleList[(get<0>(tile))*resolution + get<1>(tile)], possibleList[(get<0>(tile))*resolution + get<1>(tile)+1],
+                possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)-1], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)], possibleList[(get<0>(tile)+1)*resolution + get<1>(tile)+1]
+            };
+            vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
+
+            bool reduced = false;
+            for (int it = 0; it < nbh[4].size(); it++) {
+                bool works = false;
+                if (nbh[4][it]) {
+                    for (int i = 0; i < neighbourhoods.size(); i++) {
+
+                        if (it == neighbourhoods[i][4]) {
+                            bool fits = true;
+                            for (int n = 0; n < 9; n++) {
+                                if (!nbh[n][neighbourhoods[i][n]]) {
+                                    fits = false;
+                                    break;
+                                }
                             }
-                        }
-                        if (fits) {
-                            works = true;
-                        }
-                        else if(!reduced) {
-                            reduced = true;
-                            for (int y = -1; y < 2; y++) {
-                                for (int x = -1; x < 2; x++) {
-                                    if (y != 0 && x != 0)
-                                        tilesToCheck.push_back({y, x});
+                            if (fits) {
+                                works = true;
+                            }
+                            else if(!reduced) {
+                                reduced = true;
+                                for (int y = -1; y < 2; y++) {
+                                    for (int x = -1; x < 2; x++) {
+                                        if (y != 0 && x != 0)
+                                            tilesToCheck.push_back({y, x});
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
+            
             }
-            possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
-        
-        }
-        vector<bool> boolList = possibleList[get<0>(tile) * resolution + get<1>(tile)];
+            vector<bool> boolList = possibleList[get<0>(tile) * resolution + get<1>(tile)];
+            
+            
 
+        }
     }
-    
     
     
     bool running = true;
