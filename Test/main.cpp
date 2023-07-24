@@ -216,13 +216,13 @@ int main(int argv, char* argc[]) {
                             
                         }
                     }
-                }
-                possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
-                if (!works) {
-                    for (int y = -1; y < 2; y++) {
-                        for (int x = -1; x < 2; x++) {
-                            if (y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0 && !contains<tuple<int, int>>(tilesToCheck, {get<0>(tile) + y, get<1>(tile) + x}))
-                                tilesToCheck.push_back({get<0>(tile) + y, get<1>(tile) + x });
+                    possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
+                    if (!works) {
+                        for (int y = -1; y < 2; y++) {
+                            for (int x = -1; x < 2; x++) {
+                                if (y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0 && !contains<tuple<int, int>>(tilesToCheck, {get<0>(tile) + y, get<1>(tile) + x}))
+                                    tilesToCheck.push_back({get<0>(tile) + y, get<1>(tile) + x });
+                            }
                         }
                     }
                 }
@@ -356,3 +356,5 @@ Bra idéer:
 
 // bopi bopi bop bopi bo
 // bopi bopi bop bopi bo
+
+// Fel med koden: den kollar om tiles ska propageras så som om alla hade true på alla möjliga tiles
