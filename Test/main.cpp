@@ -174,7 +174,7 @@ int main(int argv, char* argc[]) {
 
             tuple<int, int> tile = tilesToCheck[0];
 
-            cout << "tile y: " << get<0>(tile) << " tile x: " << get<1>(tile) << std::endl;
+            //cout << "tile y: " << get<0>(tile) << " tile x: " << get<1>(tile) << std::endl;
 
             //cout << "tilepos: " << get<0>(tile) << " " << get<1>(tile) << std::endl;
 
@@ -216,6 +216,8 @@ int main(int argv, char* argc[]) {
                 }
             }
             if (reduced) {
+                reductions++;
+                //cout << "reductions: " << reductions << std::endl;
                 for (int y = -1; y < 2; y++) {
                     for (int x = -1; x < 2; x++) {
                         if ((y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0) && !contains<tuple<int, int>>(tilesToCheck, {get<0>(tile) + y, get<1>(tile) + x}))
@@ -228,7 +230,7 @@ int main(int argv, char* argc[]) {
         }
 
         // hitta den tile som skall collapsas
-        int lowest = 0;
+        int lowest = types+1;
         int lowest_i = 0;
         int highest = 1;
         for (int i = 0; i < resolution * resolution; i++) {
@@ -243,7 +245,7 @@ int main(int argv, char* argc[]) {
             if (sum > highest)
                 highest = sum;
             if (sum != 1) {
-                if (lowest == 0 or sum < lowest) {
+                if (sum < lowest) {
                     lowest_i = i;
                     lowest = sum;
                 }
