@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -25,7 +25,7 @@ bool contains(vector<T> vec, T val) {
 }
 
 //Gives you the sorrounding tiles around a position on the grid
-vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> grid, int x, int y) {
+vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> &grid, int x, int y) {
     vector<tuple<int, int>> coords;
     for (int iy = -1; iy <= 1; iy++) {
         for (int ix = -1; ix <= 1; ix++) {
@@ -170,9 +170,9 @@ int main(int argv, char* argc[]) {
 
             tuple<int, int> tile = tilesToCheck[0];
 
-            cout << "tilepos: " << get<0>(tile) << " " << get<1>(tile) << std::endl;
+            //cout << "tilepos: " << get<0>(tile) << " " << get<1>(tile) << std::endl;
 
-            cout << "tilestocheck len: " << tilesToCheck.size() << std::endl;
+            //cout << "tilestocheck len: " << tilesToCheck.size() << std::endl;
 
             tilesToCheck.erase(tilesToCheck.begin());
 
@@ -262,8 +262,8 @@ int main(int argv, char* argc[]) {
         c_y = (lowest_i % resolution) / resolution;
         c_x = (lowest_i - (lowest_i % resolution)) / resolution;
 
-        cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
-        cout << "lowest_i: " << lowest_i << std::endl;
+        //cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
+        //cout << "lowest_i: " << lowest_i << std::endl;
         
     }
 
@@ -272,6 +272,7 @@ int main(int argv, char* argc[]) {
         for (int j = 0; j < resolution; j++) {
             for (int ib = 0; ib < types; ib++) {
                 if (possibleList[i * resolution + j][ib]) {
+                    cout << "EXAMPLE!: " << grid[i][j] << std::endl;
                     grid[i][j] = ib;
                     break;
                 }
@@ -318,17 +319,20 @@ int main(int argv, char* argc[]) {
         for (int i = 0; i < resolution; i++) {
             for (int j = 0; j < resolution; j++) {
                 if (grid[i][j]) {
+                    
                     SDL_Rect r;
                     r.x = j*tile_sl;
                     r.y = i*tile_sl;
                     r.w = tile_sl;
                     r.h = tile_sl;
                     SDL_RenderDrawRect(renderer, &r);
+                    
+                    //cout << "TEST!!" << std::endl;
                 }
             }
         }
 
-		SDL_RenderCopy(renderer, winTex, nullptr, nullptr);
+		//SDL_RenderCopy(renderer, winTex, nullptr, nullptr);
 
         SDL_RenderPresent(renderer);
 
