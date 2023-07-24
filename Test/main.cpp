@@ -238,7 +238,7 @@ int main(int argv, char* argc[]) {
         for (int i = 0; i < resolution * resolution; i++) {
             c_y = (i % resolution) / resolution;
             c_x = (i - (i % resolution)) / resolution;
-            if (!contains(collapsed, {c_y, c_x})) {
+            if (!contains<tuple<int, int>>(collapsed, {c_y, c_x})) {
                 int sum = 0;
                 for (int ib = 0; ib < types; ib++) {
                     if (possibleList[i][ib])
