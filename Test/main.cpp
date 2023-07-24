@@ -131,6 +131,8 @@ int main(int argv, char* argc[]) {
     int ting = 0;
     while (true) {
 
+        // måste vara fel på hur den väljer att collapsa
+
         //cout << "iteration: " << ting << std::endl;
         ting++;
         //collapsa
@@ -155,7 +157,7 @@ int main(int argv, char* argc[]) {
             }
         }
 
-        cout << tilesToCheck.size() << std::endl;
+        //cout << tilesToCheck.size() << std::endl;
 
 
         /*
@@ -213,7 +215,6 @@ int main(int argv, char* argc[]) {
                                 }
                                 */
                             }
-                            
                         }
                     }
                     possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
@@ -238,20 +239,23 @@ int main(int argv, char* argc[]) {
         for (int i = 0; i < resolution * resolution; i++) {
             int ct_y = (i - (i % resolution)) / resolution;
             int ct_x = (i % resolution);
-            if (!contains<tuple<int, int>>(collapsed, {c_y, c_x})) {
-                int sum = 0;
-                for (int ib = 0; ib < types; ib++) {
-                    if (possibleList[i][ib])
-                        sum += 1;
-                }
-                if (sum > highest)
-                    highest = sum;
-                if (!lowest || sum < lowest) {
+            //if (/*!contains<tuple<int, int>>(collapsed, {ct_y, ct_x})*/) {
+            int sum = 0;
+            for (int ib = 0; ib < types; ib++) {
+                if (possibleList[i][ib])
+                    sum += 1;
+            }
+            if (sum > highest)
+                highest = sum;
+            if (sum != 1) {
+                if (lowest == 0 or sum < lowest) {
                     lowest_i = i;
                     lowest = sum;
                 }
             }
         }
+
+        cout << "lowest: " << lowest << std::endl;
         //cout << "highest: " << highest << std::endl;
         //cout << "lowest: " << lowest << std::endl;
         if (highest == 1) {
