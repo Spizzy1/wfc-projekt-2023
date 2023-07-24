@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -123,6 +123,8 @@ int main(int argv, char* argc[]) {
 
     vector<tuple<int, int>> tilesToCheck = {};
 
+    vector<tuple<int, int>> collapsed = {};
+
     cout << types << std::endl;
 
     //vector<tuple<int, int>> tilesToCheck;// = {{start_c, start_c}};
@@ -137,6 +139,8 @@ int main(int argv, char* argc[]) {
             possibleList[c_y * resolution + c_x][i] = false;
         }
         possibleList[c_y * resolution + c_x][collapsed_to] = true;
+
+        collapsed.push_back({c_y, c_x});
 
         //grid[c_y][c_x]
         // add the tiles around the tile that was collapsed to the list of tiles to propogate
@@ -171,6 +175,7 @@ int main(int argv, char* argc[]) {
             cout << "tilestocheck len: " << tilesToCheck.size() << std::endl;
 
             tilesToCheck.erase(tilesToCheck.begin());
+
             vector<vector<bool>> nbh = {
                 possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile)], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) + 1],
                 possibleList[(get<0>(tile)) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile)) * resolution + get<1>(tile)], possibleList[(get<0>(tile)) * resolution + get<1>(tile) + 1],
@@ -221,16 +226,20 @@ int main(int argv, char* argc[]) {
         int lowest_i = 0;
         int highest = 1;
         for (int i = 0; i < resolution * resolution; i++) {
-            int sum = 0;
-            for (int ib = 0; ib < types; ib++) {
-                if (possibleList[i][ib])
-                    sum += 1;
-            }
-            if (sum > highest)
-                highest = sum;
-            if (!lowest || sum < lowest) {
-                lowest_i = i;
-                lowest = sum;
+            c_y = (i % resolution) / resolution;
+            c_x = (i - (i % resolution)) / resolution;
+            if (!contains(collapsed, {c_y, c_x})) {
+                int sum = 0;
+                for (int ib = 0; ib < types; ib++) {
+                    if (possibleList[i][ib])
+                        sum += 1;
+                }
+                if (sum > highest)
+                    highest = sum;
+                if (!lowest || sum < lowest) {
+                    lowest_i = i;
+                    lowest = sum;
+                }
             }
         }
         //cout << "highest: " << highest << std::endl;
@@ -245,7 +254,6 @@ int main(int argv, char* argc[]) {
 
         cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
         cout << "lowest_i: " << lowest_i << std::endl;
-        
         
     }
 
