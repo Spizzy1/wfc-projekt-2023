@@ -262,7 +262,7 @@ int main(int argv, char* argc[]) {
         c_y = (lowest_i - (lowest_i % resolution)) / resolution;
         c_x = (lowest_i % resolution);
 
-        //cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
+        cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
         //cout << "lowest_i: " << lowest_i << std::endl;
         
     }
@@ -273,7 +273,7 @@ int main(int argv, char* argc[]) {
             if (possibleList[i][ib])
                 sum += 1;
         }
-        cout << "sum: " << sum << std::endl;
+        //cout << "sum: " << sum << std::endl;
     }
 
     int count = 0;
