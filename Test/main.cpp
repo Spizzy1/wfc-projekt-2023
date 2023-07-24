@@ -146,11 +146,13 @@ int main(int argv, char* argc[]) {
         */
         //Propagates through tiles
         while (tilesToCheck.size() != 0) {
-            cout << "check" << std::endl;
+            //cout << "check" << std::endl;
 
             tuple<int, int> tile = tilesToCheck[0];
 
             cout << "tilepos: " << get<0>(tile) << " " << get<1>(tile) << std::endl;
+
+            cout << "tilestocheck len: " << tilesToCheck.size() << std::endl;
 
             tilesToCheck.pop_back();
             vector<vector<bool>> nbh = {
@@ -184,8 +186,8 @@ int main(int argv, char* argc[]) {
                                 reduced = true;
                                 for (int y = -1; y < 2; y++) {
                                     for (int x = -1; x < 2; x++) {
-                                        if (y != 0 && x != 0)
-                                            tilesToCheck.push_back({ y, x });
+                                        if (y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0)
+                                            tilesToCheck.push_back({get<0>(tile) + y, get<1>(tile) + x });
                                     }
                                 }
                             }
@@ -225,8 +227,8 @@ int main(int argv, char* argc[]) {
         c_y = (lowest_i % resolution) / resolution;
         c_x = lowest_i - c_y;
 
-        //cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
-        //cout << "lowest_i: " << lowest_i << std::endl;
+        cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
+        cout << "lowest_i: " << lowest_i << std::endl;
         
         
     }
@@ -318,4 +320,5 @@ Bra idéer:
 
 //Play among us
 
-// bopi boopi bop bopi bo
+// bopi bopi bop bopi bo
+// bopi bopi bop bopi bo
