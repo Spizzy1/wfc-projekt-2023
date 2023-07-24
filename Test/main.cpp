@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -29,9 +29,25 @@ vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> grid, int x, int 
     vector<tuple<int, int>> coords;
     for (int iy = -1; iy <= 1; iy++) {
         for (int ix = -1; ix <= 1; ix++) {
-            if (iy + y > grid.size() || y + iy < 0 || x + ix > grid[y + iy].size() || x + ix < 0 || (ix == 0 && iy == 0)) {}
-            else {
-                coords.push_back({ iy + y, x + ix });
+            int tempy = iy + y;
+            int tempx = ix + x;
+            if (iy + y >= grid.size()) {
+                tempy = 0;
+            }
+            else if (y + iy < 0) {
+                tempy = grid.size() - 1;
+            } 
+            if (x + ix >= grid[y + iy].size()) {
+                tempx = 0;
+            } 
+            if (x + ix < 0) {
+                tempx = grid[tempy].size() - 1;
+            }
+            if(ix == 0 && iy == 0) {
+                
+            }
+            else{
+                coords.push_back({ tempy, tempx });
             }
         }
     }
@@ -154,7 +170,7 @@ int main(int argv, char* argc[]) {
 
             cout << "tilestocheck len: " << tilesToCheck.size() << std::endl;
 
-            tilesToCheck.pop_back();
+            tilesToCheck.erase(tilesToCheck.begin());
             vector<vector<bool>> nbh = {
                 possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile)], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) + 1],
                 possibleList[(get<0>(tile)) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile)) * resolution + get<1>(tile)], possibleList[(get<0>(tile)) * resolution + get<1>(tile) + 1],
@@ -225,7 +241,7 @@ int main(int argv, char* argc[]) {
         }
 
         c_y = (lowest_i % resolution) / resolution;
-        c_x = lowest_i - c_y;
+        c_x = (lowest_i - (lowest_i % resolution)) / resolution;
 
         cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
         cout << "lowest_i: " << lowest_i << std::endl;
