@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <functional>
 #include <cmath>
 #include <vector>
@@ -236,8 +236,8 @@ int main(int argv, char* argc[]) {
         int lowest_i = 0;
         int highest = 1;
         for (int i = 0; i < resolution * resolution; i++) {
-            c_y = (i % resolution) / resolution;
-            c_x = (i - (i % resolution)) / resolution;
+            int ct_y = (i - (i % resolution)) / resolution;
+            int ct_x = (i % resolution);
             if (!contains<tuple<int, int>>(collapsed, {c_y, c_x})) {
                 int sum = 0;
                 for (int ib = 0; ib < types; ib++) {
@@ -259,26 +259,47 @@ int main(int argv, char* argc[]) {
             break;
         }
 
-        c_y = (lowest_i % resolution) / resolution;
-        c_x = (lowest_i - (lowest_i % resolution)) / resolution;
+        c_y = (lowest_i - (lowest_i % resolution)) / resolution;
+        c_x = (lowest_i % resolution);
 
         //cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
         //cout << "lowest_i: " << lowest_i << std::endl;
         
     }
 
+    for (int i = 0; i < resolution*resolution; i++) {
+        int sum = 0;
+        for (int ib = 0; ib < types; ib++) {
+            if (possibleList[i][ib])
+                sum += 1;
+        }
+        cout << "sum: " << sum << std::endl;
+    }
+
+    int count = 0;
     // get possibleList:s data to grid
     for (int i = 0; i < resolution; i++) {
         for (int j = 0; j < resolution; j++) {
             for (int ib = 0; ib < types; ib++) {
                 if (possibleList[i * resolution + j][ib]) {
-                    cout << "EXAMPLE!: " << grid[i][j] << std::endl;
                     grid[i][j] = ib;
+                    count++;
+                    //cout << "count: " << count << std::endl;
+                    //cout << "EXAMPLE!: " << ib << std::endl;
                     break;
                 }
             }
         }
     }
+
+    /*
+    for (int i = 0; i < resolution; i++) {
+        for (int j = 0; j < resolution; j++) {
+            cout << (int)grid[i][j] << " ";
+        }
+        cout << std::endl;
+    }
+    */
 
     float tile_sl = (float)ww / resolution;
     
@@ -294,7 +315,6 @@ int main(int argv, char* argc[]) {
                 running = false;
             }
         }
-        
 
         /*
         // splat down some random pixels
@@ -362,3 +382,5 @@ Bra idéer:
 // bopi bopi bop bopi bo
 
 // Fel med koden: den kollar om tiles ska propageras så som om alla hade true på alla möjliga tiles
+
+// lo qwerty
