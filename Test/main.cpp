@@ -76,7 +76,7 @@ int main(int argv, char* argc[]) {
     float dt;
 
     // wfc stuff
-    const int resolution = 100;
+    const int resolution = 10;
     vector<vector<Uint8>> grid(resolution, vector<Uint8>(resolution, -1));
     float tile_length = (float)ww / resolution;
 
@@ -127,6 +127,8 @@ int main(int argv, char* argc[]) {
 
     cout << types << std::endl;
 
+    int reductions = 0;
+
     //vector<tuple<int, int>> tilesToCheck;// = {{start_c, start_c}};
     int ting = 0;
     while (true) {
@@ -172,6 +174,8 @@ int main(int argv, char* argc[]) {
 
             tuple<int, int> tile = tilesToCheck[0];
 
+            cout << "tile y: " << get<0>(tile) << " tile x: " << get<1>(tile) << std::endl;
+
             //cout << "tilepos: " << get<0>(tile) << " " << get<1>(tile) << std::endl;
 
             //cout << "tilestocheck len: " << tilesToCheck.size() << std::endl;
@@ -201,30 +205,21 @@ int main(int argv, char* argc[]) {
                                 }
                             }
                             if (fits) {
-                                //cout << "Rahh2!" << std::endl;
                                 works = true;
-                            }
-                            else if (!reduced) {
-                                reduced = true;
-                                /*
-                                for (int y = -1; y < 2; y++) {
-                                    for (int x = -1; x < 2; x++) {
-                                        if (y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0)
-                                            tilesToCheck.push_back({get<0>(tile) + y, get<1>(tile) + x });
-                                    }
-                                }
-                                */
                             }
                         }
                     }
                     possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
-                    if (!works) {
-                        for (int y = -1; y < 2; y++) {
-                            for (int x = -1; x < 2; x++) {
-                                if (y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0 && !contains<tuple<int, int>>(tilesToCheck, {get<0>(tile) + y, get<1>(tile) + x}))
-                                    tilesToCheck.push_back({get<0>(tile) + y, get<1>(tile) + x });
-                            }
-                        }
+                }
+                if (!works && !reduced) {
+                    reduced = true;
+                }
+            }
+            if (reduced) {
+                for (int y = -1; y < 2; y++) {
+                    for (int x = -1; x < 2; x++) {
+                        if ((y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0) && !contains<tuple<int, int>>(tilesToCheck, {get<0>(tile) + y, get<1>(tile) + x}))
+                            tilesToCheck.push_back({get<0>(tile) + y, get<1>(tile) + x });
                     }
                 }
             }
