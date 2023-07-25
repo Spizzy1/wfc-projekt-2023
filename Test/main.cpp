@@ -102,9 +102,9 @@ int main(int argv, char* argc[]) {
     types += 1;
 
     // gets all neighbourhoods from img
-    vector<vector<Uint8>> neighbourhoods((img_width-nb_sl)*(resolution-nb_sl), vector<Uint8>(nb_sl*nb_sl));
+    vector<vector<int>> neighbourhoods((img_width-nb_sl)*(resolution-nb_sl), vector<int>(nb_sl*nb_sl));
     for (int i = 0; i < img_height - nb_sl; i++) {
-        for (int j = 0; j < img_width-nb_sl; j++) {
+        for (int j = 0; j < img_width - nb_sl; j++) {
             for (int y = 0; y < nb_sl; y++) {
                 for (int x = 0; x < nb_sl; x++) {
                     neighbourhoods[i*(img_width-nb_sl)+j][y*nb_sl+x] = img[(i + y) * img_width + j + x];
@@ -189,13 +189,42 @@ int main(int argv, char* argc[]) {
 
             //cout << "tilestocheck len: " << tilesToCheck.size() << std::endl;
 
+            cout << "tilestocheck len1: " << tilesToCheck.size() << std::endl;
             tilesToCheck.erase(tilesToCheck.begin());
+            cout << "tilestocheck len2: " << tilesToCheck.size() << std::endl << std::endl;
 
+            /*
             vector<vector<bool>> nbh = {
                 possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile)], possibleList[(get<0>(tile) - 1) * resolution + get<1>(tile) + 1],
                 possibleList[(get<0>(tile)) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile)) * resolution + get<1>(tile)], possibleList[(get<0>(tile)) * resolution + get<1>(tile) + 1],
                 possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile) - 1], possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile)], possibleList[(get<0>(tile) + 1) * resolution + get<1>(tile) + 1]
             };
+            */
+
+            vector<vector<bool>> nbh(9);
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+
+                    int I = get<0>(tile) + i;
+                    int J = get<1>(tile) + j;
+
+                    if (I < 0) {
+                        I += resolution;
+                    } else if (I > resolution-1) {
+                        I -= resolution;
+                    }
+
+                    if (J < 0) {
+                        J += resolution;
+                    } else if (J > resolution-1) {
+                        J -= resolution;
+                    }
+
+                    nbh[i*3+j] = possibleList[I*resolution+J];
+
+                }
+            }
+
 
             // behöver ändras?
             vector<tuple<int, int>> sTiles = surroundingTiles(grid, get<1>(tile), get<0>(tile));
@@ -234,15 +263,45 @@ int main(int argv, char* argc[]) {
             if (reduced) {
                 //cout << "TEST2" << std::endl;
                 reductions++;
-                //cout << "reductions: " << reductions << std::endl;
+                cout << "reductions: " << reductions << std::endl;
                 for (int y = -1; y < 2; y++) {
                     for (int x = -1; x < 2; x++) {
-                        if ((y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0) && !contains<tuple<int, int>>(tilesToCheck, {get<0>(tile) + y, get<1>(tile) + x}))
-                            tilesToCheck.push_back({get<0>(tile) + y, get<1>(tile) + x });
+                        if (y != 0 && x != 0) {
+
+                            int I = y + get<0>(tile);
+                            int J = x + get<1>(tile);
+
+                            if (I < 0) {
+                                I += resolution;
+                            } else if (I > resolution-1) {
+                                I -= resolution;
+                            }
+
+                            if (J < 0) {
+                                J += resolution;
+                            } else if (J > resolution-1) {
+                                J -= resolution;
+                            }
+
+                            tilesToCheck.push_back({I, J});
+
+                            /*
+                            if ((y != 0 && x != 0 && y + get<0>(tile) < resolution-1 && y + get<0>(tile) > 0 && x + get<1>(tile) < resolution-1 && x + get<1>(tile) > 0) && !contains<tuple<int, int>>(tilesToCheck, {get<0>(tile) + y, get<1>(tile) + x}))
+                                tilesToCheck.push_back({get<0>(tile) + y, get<1>(tile) + x });
+                            */
+                        }
                     }
                 }
             }
-            vector<bool> boolList = possibleList[get<0>(tile) * resolution + get<1>(tile)];
+
+            /*
+            for (int i = 0; i < tilesToCheck.size(); i++) {
+                cout << "y: " << get<0>(tilesToCheck[i]) << " x: " << get<1>(tilesToCheck[i]) << " ";
+            }
+            cout << std::endl << std::endl;
+            */
+
+            //vector<bool> boolList = possibleList[get<0>(tile) * resolution + get<1>(tile)];
 
         }
 
