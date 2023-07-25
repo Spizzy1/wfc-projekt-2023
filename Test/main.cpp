@@ -57,7 +57,6 @@ vector<tuple<int, int>> surroundingTiles(vector<vector<Uint8>> &grid, int x, int
 
 int main(int argv, char* argc[]) {
 
-    
     //Width and height respectively
     int ww = 600;
     int wh = 600;
@@ -113,6 +112,16 @@ int main(int argv, char* argc[]) {
                 }
             }
         }
+    }
+
+    for (int i = 0; i < neighbourhoods.size(); i++) {
+        for (int y = 0; y < nb_sl; y++) {
+            for (int x = 0; x < nb_sl; x++) {
+                cout << (int)neighbourhoods[i][y*nb_sl+x];
+            }
+            cout << std::endl;
+        }
+        cout << std::endl;
     }
 
     //int start_c = resolution / 2;
@@ -193,10 +202,12 @@ int main(int argv, char* argc[]) {
             //cout << "test" << std::endl;
             bool reduced = false;
             for (int it = 0; it < nbh[mid_nbh_index].size(); it++) {
-                bool works = false;
                 if (nbh[mid_nbh_index][it]) {
+                    bool works = false;
                     for (int i = 0; i < neighbourhoods.size(); i++) {
+                        // denna if-sats kan vara ett fel
                         if (it == neighbourhoods[i][mid_nbh_index]) {
+                            //cout << "TEST" << std::endl;
                             bool fits = true;
                             for (int n = 0; n < nb_sl*nb_sl; n++) {
                                 if (!nbh[n][neighbourhoods[i][n]]) {
@@ -206,16 +217,22 @@ int main(int argv, char* argc[]) {
                             }
                             if (fits) {
                                 works = true;
+                                //cout << "testing";
                             }
                         }
                     }
+                    if (!works) {
+                        //cout << "test2" << std::endl;
+                    }
                     possibleList[(get<0>(tile)) * resolution + get<1>(tile)][it] = works;
-                }
-                if (!works && !reduced) {
-                    reduced = true;
+                    if (!works && !reduced) {
+                        //cout << "TEST1" << std::endl;
+                        reduced = true;
+                    }
                 }
             }
             if (reduced) {
+                //cout << "TEST2" << std::endl;
                 reductions++;
                 //cout << "reductions: " << reductions << std::endl;
                 for (int y = -1; y < 2; y++) {
@@ -252,18 +269,18 @@ int main(int argv, char* argc[]) {
             }
         }
 
-        cout << "lowest: " << lowest << std::endl;
+        //cout << "lowest: " << lowest << std::endl;
         //cout << "highest: " << highest << std::endl;
         //cout << "lowest: " << lowest << std::endl;
         if (highest == 1) {
-            cout << "quit" << std::endl;
+            //cout << "quit" << std::endl;
             break;
         }
 
         c_y = (lowest_i - (lowest_i % resolution)) / resolution;
         c_x = (lowest_i % resolution);
 
-        cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
+        //cout << "c_x: " << c_x << " c_y: " << c_y << std::endl;
         //cout << "lowest_i: " << lowest_i << std::endl;
         
     }
